@@ -4,7 +4,7 @@ import './header.css'
 
 const Header = () => {
   return (
-    <div className="header d-flex">
+    <header className="header d-flex">
       <h3>
         <a href="#">Star DB</a>
       </h3>
@@ -19,7 +19,7 @@ const Header = () => {
           <a href="#">Starships</a>
         </li>
       </ul>
-    </div>
+    </header>
   );
 };
 
