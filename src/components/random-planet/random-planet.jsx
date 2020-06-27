@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 import SwapiService from "../../services/swapi-services";
 import Spinner from "../spinner";
@@ -6,8 +7,8 @@ import ErrorIndicator from "../error-indicator";
 
 import "./random-planet.css";
 
-const RandomPlanet = () => {
-  const swapiService = new SwapiService();
+const RandomPlanet = ({ updateInterval }) => {
+  const { getPlanet } = new SwapiService();
 
   const [planet, setPlanet] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,19 +24,21 @@ const RandomPlanet = () => {
     setLoading(false);
   };
 
-  const updatePlanet = () => {
-    const id = Math.floor(Math.random() * 15) + 3;
-    swapiService.getPlanet(id).then(onPlanetLoaded).catch(onError);
-  };
-
   useEffect(() => {
+    const updatePlanet = () => {
+      const id = Math.floor(Math.random() * 15) + 3;
+      getPlanet(id).then(onPlanetLoaded).catch(onError);
+    };
+
     updatePlanet();
 
     let id = setInterval(() => {
       updatePlanet();
-    }, 5000);
+    }, updateInterval);
 
     return () => clearInterval(id);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasData = !(loading || error);
@@ -61,6 +64,7 @@ const PlanetView = ({
       <img
         className="planet-image"
         src={`https://starwars-visualguide.com/assets/img/planets/${id}.jpg`}
+        alt="planet"
       />
       <div>
         <h4>{name}</h4>
@@ -84,3 +88,11 @@ const PlanetView = ({
 };
 
 export default RandomPlanet;
+
+RandomPlanet.defaultProps = {
+  updateInterval: 10000,
+};
+
+RandomPlanet.propTypes = {
+  updateInterval: PropTypes.number,
+};

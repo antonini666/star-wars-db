@@ -1,40 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 
 import "./item-list.css";
-import Spinner from "../spinner";
 
-const ItemList = ({ onItemSelected, getData, children }) => {
-  const [itemList, setItemList] = useState(null);
-
-  useEffect(() => {
-    getData().then((itemList) => {
-      setItemList(itemList);
-    });
-  }, [getData]);
-
-  const renderItems = (arr) => {
-    return arr.map((item) => {
-      const { id } = item;
-      const label = children(item);
-      return (
-        <li
-          className="list-group-item"
-          key={id}
-          onClick={() => onItemSelected(id)}
-        >
-          {label}
-        </li>
-      );
-    });
-  };
-
-  if (!itemList) {
-    return <Spinner />;
-  }
-
-  const items = renderItems(itemList);
+const ItemList = ({ data, children: renderLabel, onItemSelected }) => {
+  const items = data.map((item) => {
+    const { id } = item;
+    const label = renderLabel(item);
+    return (
+      <li
+        className="list-group-item"
+        key={id}
+        onClick={() => onItemSelected(id)}
+      >
+        {label}
+      </li>
+    );
+  });
 
   return <div className="item-list list-group">{items}</div>;
+};
+
+ItemList.defaultProps = {
+  onItemSelected: () => {},
+};
+
+ItemList.propTypes = {
+  onItemSelected: PropTypes.func,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  children: PropTypes.func.isRequired,
 };
 
 export default ItemList;
